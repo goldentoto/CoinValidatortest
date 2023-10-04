@@ -9,14 +9,14 @@ import org.junit.Test;
 
 import com.tdc.coin.CoinValidator;
 
-public class CoinValidatortest {
+public class CoinValidatorTest {
 	private Currency currency;
-	private List<BigDecimal> coindenominations;
-	private CoinValidator objundertest;
+	private List<BigDecimal> coinDenominations;
+	private CoinValidator objUnderTest;
 	
 	@Before
 	public void setup() {
-		this.objundertest = new CoinValidator(currency,coindenominations);
+		this.objUnderTest = new CoinValidator(currency,coinDenominations);
 	}
 	
 	@Test
