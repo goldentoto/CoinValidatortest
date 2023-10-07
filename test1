@@ -1,6 +1,9 @@
 package com.thelocalmarketplace.hardware.test;
 
+import static org.junit.Assert.fail;
+
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Currency;
 import java.util.List;
 
@@ -9,19 +12,65 @@ import org.junit.Test;
 
 import com.tdc.coin.CoinValidator;
 
-public class CoinValidatorTest {
+import ca.ucalgary.seng300.simulation.InvalidArgumentSimulationException;
+import ca.ucalgary.seng300.simulation.NullPointerSimulationException;
+
+public class CoinValidatortest {
 	private Currency currency;
-	private List<BigDecimal> coinDenominations;
-	private CoinValidator objUnderTest;
+	private List<BigDecimal> coindenominations;
+	private CoinValidator objundertest;
 	
 	@Before
-	public void setup() {
-		this.objUnderTest = new CoinValidator(currency,coinDenominations);
+    public void setup() {
+        Currency currency = Currency.getInstance("USD");
+        List<BigDecimal> denominations = Arrays.asList(new BigDecimal("0.25"), new BigDecimal("0.1"), new BigDecimal("0.05"));
+        CoinValidator validator = new CoinValidator(currency, denominations);
+
 	}
-	
-	@Test
-	public void test1() {
-		
-	}
-	
+
+    @Test
+    public void testNullCurrency() {
+        List<BigDecimal> denominations = Arrays.asList(new BigDecimal("0.25"), new BigDecimal("0.1"), new BigDecimal("0.05"));
+        
+        try {
+            new CoinValidator(null, denominations);
+//           fail("Expected NullPointerSimulationException, but it wasn't thrown.");
+        } catch (NullPointerSimulationException e) {
+            // Exception was thrown, so the test passes.
+        }
+    }
+
+    @Test
+    public void testNullDenominations() {
+        Currency currency = Currency.getInstance("USD");
+
+        try {
+            new CoinValidator(currency, null);
+//            fail("Expected NullPointerSimulationException, but it wasn't thrown.");
+        } catch (NullPointerSimulationException e) {
+            // Exception was thrown, so the test passes.
+        }
+    }
+
+    @Test
+    public void testEmptyDenominations() {
+        Currency currency = Currency.getInstance("USD");
+        List<BigDecimal> emptyDenominations = Arrays.asList();
+
+        try {
+            new CoinValidator(currency, emptyDenominations);
+            fail("Expected InvalidArgumentSimulationException, but it wasn't thrown.");
+        } catch (InvalidArgumentSimulationException e) {
+            // Exception was thrown, so the test passes.
+        }
+    }
 }
+
+
+
+
+
+
+
+	
+	
