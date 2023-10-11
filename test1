@@ -3,20 +3,35 @@ package com.thelocalmarketplace.hardware.test;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Currency;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
+import com.tdc.Sink;
+import com.tdc.coin.Coin;
 import com.tdc.coin.CoinValidator;
 
 import ca.ucalgary.seng300.simulation.InvalidArgumentSimulationException;
 import ca.ucalgary.seng300.simulation.NullPointerSimulationException;
 
 public class ValidatorTest {
-	
+	private Currency currency = Currency.getInstance("CAD");
+	private List<BigDecimal> coinDenominations = Arrays.asList(new BigDecimal(0.05));
+	private CoinValidator coinValidator;
+
+	@Before
+	public void setUp() {
+        Map<BigDecimal, Sink<Coin>> standardSinks = new HashMap<>();
+        CoinValidator coinValidator = new CoinValidator(currency,coinDenominations );
+    }
+
 	@Test(expected = NullPointerSimulationException.class)
 	public void testNullCurrency() {
+
 		List<BigDecimal> coinDenominations = Arrays.asList(new BigDecimal(0.05));
 		
 		new CoinValidator(null,coinDenominations);
@@ -73,6 +88,13 @@ public class ValidatorTest {
 		Currency currency = Currency.getInstance("CAD");
 		
 		new CoinValidator(currency, coinDenominations); 
+	}
+	
+	@Test
+	public void testRecieveValidCoin() {
+		Coin validCoin = new Coin(currency,new BigDecimal("0.25"));	
+		coinValidator.receive(validCoin);
+		
 	}
 	
 }
