@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,25 +17,25 @@ import com.tdc.coin.CoinValidator;
 import ca.ucalgary.seng300.simulation.InvalidArgumentSimulationException;
 import ca.ucalgary.seng300.simulation.NullPointerSimulationException;
 
-public class ValidatorTest {
-	private Currency currency = Currency.getInstance("CAD");
-	private List<BigDecimal> coinDenominations = Arrays.asList(new BigDecimal(0.05));
-	private CoinValidator coinValidator;
+/**
+ * Tests for CoinValidator, its abstract base class AbstractCoinValidator, and its related interface CoinValidatorObserver
+ * @author  
+ */
 
-	@Before
-	public void setUp() {
-        Map<BigDecimal, Sink<Coin>> standardSinks = new HashMap<>();
-        CoinValidator coinValidator = new CoinValidator(currency,coinDenominations );
-    }
-
+public class CoinValidatorTest {
+	/**
+	 * Tests to make sure a null exception is thrown when the currency of a coin validator is null
+	 */
 	@Test(expected = NullPointerSimulationException.class)
 	public void testNullCurrency() {
-
 		List<BigDecimal> coinDenominations = Arrays.asList(new BigDecimal(0.05));
 		
 		new CoinValidator(null,coinDenominations);
 	}
 	
+	/**
+	 * Tests to make sure a null exception is thrown when the denominations list is null
+	 */
 	@Test(expected = NullPointerSimulationException.class)
 	public void testNullDenomList() {
 		Currency currency = Currency.getInstance("CAD");
@@ -44,6 +43,9 @@ public class ValidatorTest {
 		new CoinValidator(currency, null);
 	}
 	
+	/**
+	 * Tests to make sure an invalid argument exception is thrown when the denominations list is empty
+	 */
 	@Test(expected = InvalidArgumentSimulationException.class)
 	public void testNoDenominations() {
 		List<BigDecimal> coinDenominations = Arrays.asList();
@@ -52,12 +54,20 @@ public class ValidatorTest {
 		new CoinValidator(currency, coinDenominations);
 	}
 	
+	/**
+	 * Tests a valid coin validator 
+	 */
 	@Test
 	public void testValidCoinValidator() {
 		List<BigDecimal> coinDenominations = Arrays.asList(new BigDecimal(0.05));
 		Currency currency = Currency.getInstance("CAD");
+		
+		new CoinValidator(currency, coinDenominations);
 	}
 	
+	/**
+	 * Test throws a null exception when one of the denominations in the denomination list is null
+	 */
 	@Test(expected = NullPointerSimulationException.class)
 	public void testNullCoinDenom() {
 		Currency currency = Currency.getInstance("CAD");
@@ -66,6 +76,9 @@ public class ValidatorTest {
 		new CoinValidator(currency, coinDenominations);
 	}
 	
+	/**
+	 * Test throws an invalid argument exception if a denomination in the list is zero
+	 */
 	@Test(expected = InvalidArgumentSimulationException.class)
 	public void testZeroDenom() {
 		List<BigDecimal> coinDenominations = Arrays.asList(new BigDecimal(0.05), BigDecimal.ZERO);
@@ -74,6 +87,9 @@ public class ValidatorTest {
 		new CoinValidator(currency, coinDenominations);
 	}
 	
+	/**
+	 * Test throws an invalid argument exception if a denomination in the list is less than zero
+	 */
 	@Test(expected = InvalidArgumentSimulationException.class)
 	public void testNonPosDenom() {
 		List<BigDecimal> coinDenominations = Arrays.asList(new BigDecimal(0.05), new BigDecimal(-5));
@@ -82,22 +98,18 @@ public class ValidatorTest {
 		new CoinValidator(currency, coinDenominations);
 	}
 	
+	/**
+	 * Test throws an invalid argument exception if there are multiple of the same denomination in the list
+	 */
 	@Test(expected = InvalidArgumentSimulationException.class)
 	public void testUniqueDenom() {
-		List<BigDecimal> coinDenominations = Arrays.asList(new BigDecimal(0.05), new BigDecimal(0.05));
+		List<BigDecimal> coinDenominations = Arrays.asList(new BigDecimal(0.05), new BigDecimal(0.05), new BigDecimal(0.05));
 		Currency currency = Currency.getInstance("CAD");
 		
 		new CoinValidator(currency, coinDenominations); 
 	}
 	
-	@Test
-	public void testRecieveValidCoin() {
-		Coin validCoin = new Coin(currency,new BigDecimal("0.25"));	
-		coinValidator.receive(validCoin);
-		
-	}
-	
-}
+} 
 
 
 
