@@ -67,8 +67,23 @@ public class AbstractCVTest {
          coinDenominations.add(new BigDecimal(0.25));
          coinValidator.setup(rejectionSink,standardSinks, overflowSink); 
 	 }
+	public void testUniqueSink() {
+		SinkStub<Coin> sink1 = new SinkStub<Coin>();
+	     	standardSinks.put(new BigDecimal("0.05"), sink1);
+	        standardSinks.put(new BigDecimal("0.25"), sink1);
+	        coinValidator.setup(rejectionSink,standardSinks, overflowSink);
+	 }
 	
+	@Test(expected = InvalidArgumentSimulationException.class)
+	 public void testsetcontainRejectionSink() {
+	     standardSinks.put(new BigDecimal("0.05"), rejectionSink);
+         coinValidator.setup(rejectionSink,standardSinks, overflowSink);
+	 }
 	 
-
+	 @Test(expected = InvalidArgumentSimulationException.class)
+	 public void testsetcontainOverflowSink() {
+	     standardSinks.put(new BigDecimal("0.05"), overflowSink);
+         coinValidator.setup(rejectionSink,standardSinks, overflowSink);
+	 }
 	
 }
