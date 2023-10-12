@@ -85,5 +85,38 @@ public class AbstractCVTest {
 	     standardSinks.put(new BigDecimal("0.05"), overflowSink);
          coinValidator.setup(rejectionSink,standardSinks, overflowSink);
 	 }
+	@Test (expected = NoPowerException.class)
+     public void testUnpoweredValidatorReceive() throws DisabledException, CashOverloadException {
+         CoinValidator tempValidator = new CoinValidator(currency,coinDenominations); 
+         tempValidator.receive(testcoin);
+     }
+     
+     @Test (expected = DisabledException.class)
+     public void testDisabledValiatorReceive() throws DisabledException, CashOverloadException {
+         coinValidator.disable();
+         coinValidator.receive(testcoin);
+     }
+     
+     @Test (expected = NullPointerSimulationException.class)
+     public void testNullCoinReceive() throws DisabledException, CashOverloadException {
+         Coin nullCoin = null;
+         coinValidator.receive(nullCoin);
+     }
+     
+     @Test
+     public void testValidCoinDetectedReceive() throws DisabledException, CashOverloadException{
+         ObserveStub testObserver = new ObserveStub();
+         coinValidator.attach(testObserver);
+         coinValidator.receive(testcoin);
+         Assert.assertTrue(testObserver.validCoin);
+     }
+	 @Test
+	 public void testRecieveInValidCoin() throws DisabledException, CashOverloadException{
+		 ObserveStub testObserver = new ObserveStub();
+         coinValidator.attach(testObserver);
+         coinValidator.receive(testcoin);
+         Assert.assertFalse(testObserver.validCoin);
+	 
+}
 	
 }
