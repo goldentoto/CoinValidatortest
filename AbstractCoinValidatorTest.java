@@ -1,6 +1,7 @@
 package com.thelocalmarketplace.hardware.test;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Currency;
 import java.util.HashMap;
@@ -18,56 +19,56 @@ import ca.ucalgary.seng300.simulation.InvalidArgumentSimulationException;
 import ca.ucalgary.seng300.simulation.NullPointerSimulationException;
 import powerutility.PowerGrid;
 
-public class AbstractCoinValidatorTest {
-	private Currency currency;
-	private List<BigDecimal> coinDenominations; 
-	private CoinValidator coinValidator; 
-	private Map<BigDecimal, Sink<Coin>> standardSinks;
-	private Sink<Coin> rejectionSink, overflowSink ;
-	
+public class AbstractCVTest {
+	private Currency currency = Currency.getInstance("CAD");
+	private List<BigDecimal> coinDenominations = new ArrayList<>(Arrays.asList(new BigDecimal(0.05)));
+	private CoinValidator coinValidator = new CoinValidator(currency,coinDenominations );
+	private Map<BigDecimal, Sink<Coin>> standardSinks  = new HashMap<>();
+	private Sink<Coin> rejectionSink = new SinkStub<Coin>();
+	private Sink<Coin> overflowSink = new SinkStub<Coin>();
 	@Before
 	public void setUp() {
-		currency = Currency.getInstance("CAD");
-		coinDenominations = Arrays.asList(new BigDecimal(0.05));
-		coinValidator = new CoinValidator(currency, coinDenominations);
-		rejectionSink = new SinkStub<Coin>();
-		overflowSink = new SinkStub<Coin>();
-		standardSinks = new HashMap<>();
+//		Sink<Coin> rejectionSink = new SinkStub<Coin>();
+//		Sink<Coin> overflowSink = new SinkStub<Coin>();
+//		Map<BigDecimal, Sink<Coin>> standardSinks = new HashMap<>();
         coinValidator.connect(PowerGrid.instance());
         coinValidator.activate();
         standardSinks.put(new BigDecimal("0.05"), new SinkStub<Coin>());
         coinValidator.setup(rejectionSink,standardSinks, overflowSink);   
-     }
+            }
 	
 	 @Test(expected = NullPointerSimulationException.class)
 	 public void testSetupWithNullRejectionSink() {
-        CoinValidator coinValidator = new CoinValidator (currency,coinDenominations);   
-        coinValidator.setup(null, standardSinks, overflowSink);
+        CoinValidator coinValidator1 = new CoinValidator (currency,coinDenominations); 
+        coinValidator1.setup(null, standardSinks, overflowSink);
 	 }
 	 
 	 @Test(expected = NullPointerSimulationException.class)
 	 public void testSetupWithNullOverflowSink() {
-	        CoinValidator coinValidator = new CoinValidator (currency,coinDenominations);   
-	        coinValidator.setup(rejectionSink, standardSinks, null);
+	        CoinValidator coinValidator1 = new CoinValidator (currency,coinDenominations); 
+	        coinValidator1.setup(rejectionSink, standardSinks, null);
 		 }
 	 @Test(expected = NullPointerSimulationException.class)
 	 public void testSetupWithNullStandardSinks() {
-	        CoinValidator coinValidator = new CoinValidator (currency,coinDenominations);    
-	        coinValidator.setup(rejectionSink, null, overflowSink);
-		 }	
+	        CoinValidator coinValidator1 = new CoinValidator (currency,coinDenominations); 
+	        coinValidator1.setup(rejectionSink, null, overflowSink);
+		 }
 	 
 	 @Test(expected = InvalidArgumentSimulationException.class)
-	 public void testEqualStdSinksAndDenom() {
-	 	standardSinks.put(new BigDecimal(0.10), new SinkStub<Coin>());
-	 	standardSinks.put(new BigDecimal(0.05), new SinkStub<Coin>());
-        coinValidator.setup(rejectionSink, standardSinks, overflowSink);  
+		 public void testequalstdSinksandDenom() {
+		 	standardSinks.put(new BigDecimal("0.10"), new SinkStub<Coin>());
+		 	standardSinks.put(new BigDecimal("0.15"), new SinkStub<Coin>());
+	        coinValidator.setup(rejectionSink,standardSinks, overflowSink); 
 	 }
-	 
 	 @Test(expected = NullPointerSimulationException.class)
-	 public void testNullSinkDenom() {
+	 public void testNullSinkDenominations() {
 		 SinkStub<Coin> nullStub = null;
-		 standardSinks.put(new BigDecimal(0.05), new SinkStub<Coin>());
-		 standardSinks.put(new BigDecimal(0.10), nullStub); 
+         standardSinks.put(new BigDecimal(0.25), nullStub);
+         coinDenominations.add(new BigDecimal(0.25));
+         coinValidator.setup(rejectionSink,standardSinks, overflowSink); 
 	 }
-	  
-}  
+	
+	 
+
+	
+}
